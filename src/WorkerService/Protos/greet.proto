@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "WorkerService";
+
+package WorkerService;
+
+service Worker {
+  rpc Load (LoadRequest) returns (LoadReply);
+}
+
+message LoadRequest {
+  int32 seconds = 1;
+}
+
+message LoadReply {
+  int64 numberOfMessages = 1;
+}
