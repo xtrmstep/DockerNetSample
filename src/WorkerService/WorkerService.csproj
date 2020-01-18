@@ -11,6 +11,7 @@
     <ItemGroup>
         <PackageReference Include="Grpc.AspNetCore" Version="2.23.1" />
         <PackageReference Include="Grpc.Tools" Version="2.26.0" />
+        <PackageReference Include="JustEat.StatsD" Version="4.1.0" />
     </ItemGroup>
 
 </Project>

@@ -1,22 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using JustEat.StatsD;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace WorkerService
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            services.Configure<WorkerSettings>(_configuration.GetSection("WorkerSettings"));
+            var statsDSettings = _configuration.GetSection(nameof(StatsDSettings));
+            services.AddStatsD(
+                provider =>
+                {
+                    var logger = provider.GetService<ILogger<Program>>();
+                    return new StatsDConfiguration
+                    {
+                        Host = statsDSettings["HostName"],
+                        Port = int.Parse(statsDSettings["Port"]),
+                        Prefix = statsDSettings["Prefix"],
+                        OnError = ex =>
+                        {
+                            logger.LogError(ex, ex.Message);
+                            //return true; // ignore the exception
+                            return false;
+                        }
+                    };
+                });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -27,11 +58,13 @@ namespace WorkerService
                 app.UseDeveloperExceptionPage();
             }
 
+            // var config = CreateConfiguration(env.EnvironmentName);
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<WorkerService>();
+                endpoints.MapGrpcService<Services.WorkerService>();
 
                 endpoints.MapGet("/", async context =>
                 {
@@ -39,5 +72,16 @@ namespace WorkerService
                 });
             });
         }
+        
+        // private static IConfigurationRoot CreateConfiguration(string environment)
+        // {
+        //     var builder = new ConfigurationBuilder()
+        //         .SetBasePath(Directory.GetCurrentDirectory())
+        //         .AddJsonFile("appsettings.json", true, true)
+        //         .AddJsonFile($"appsettings.{environment}.json", true, true);
+        //     var configuration = builder.Build();
+        //     return configuration;
+        // }
+
     }
 }
