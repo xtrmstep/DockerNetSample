@@ -5,13 +5,13 @@ option csharp_namespace = "WorkerService";
 package WorkerService;
 
 service Worker {
-  rpc Load (LoadRequest) returns (LoadReply);
+  rpc Factorial (FactorialRequest) returns (FactorialReply);
 }
 
-message LoadRequest {
-  int32 seconds = 1;
+message FactorialRequest {
+  int32 factor = 1;
 }
 
-message LoadReply {
-  int64 numberOfMessages = 1;
+message FactorialReply {
+  int64 result = 1;
 }

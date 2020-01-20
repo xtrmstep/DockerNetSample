@@ -17,12 +17,17 @@ namespace WorkerService.Services
             _workerSettings = workerSettings.Value;
         }
 
-        public override async Task<LoadReply> Load(LoadRequest request, ServerCallContext context)
+        public override async Task<FactorialReply> Factorial(FactorialRequest request, ServerCallContext context)
         {
-            await Task.Delay(_workerSettings.WorkProcessDelay);
-            return await Task.FromResult(new LoadReply
+            long result = 1;
+            for (var i = 1; i <= request.Factor; i++)
             {
-                NumberOfMessages = 111
+                await Task.Delay(_workerSettings.WorkProcessDelay);
+                result *= i;
+            }
+            return await Task.FromResult(new FactorialReply
+            {
+                Result = result
             });
         }
     }
