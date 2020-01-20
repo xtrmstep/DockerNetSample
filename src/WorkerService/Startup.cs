@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using WorkerService.Configuration;
 
 namespace WorkerService
 {
@@ -22,13 +23,15 @@ namespace WorkerService
         {
             _configuration = configuration;
         }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var statsDSettings = _configuration.GetSection(nameof(StatsDSettings));
+
             services.AddGrpc();
             services.Configure<WorkerSettings>(_configuration.GetSection("WorkerSettings"));
-            var statsDSettings = _configuration.GetSection(nameof(StatsDSettings));
             services.AddStatsD(
                 provider =>
                 {
@@ -46,8 +49,6 @@ namespace WorkerService
                         }
                     };
                 });
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,30 +59,14 @@ namespace WorkerService
                 app.UseDeveloperExceptionPage();
             }
 
-            // var config = CreateConfiguration(env.EnvironmentName);
-
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<Services.WorkerService>();
 
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-                });
+                endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909"); });
             });
         }
-        
-        // private static IConfigurationRoot CreateConfiguration(string environment)
-        // {
-        //     var builder = new ConfigurationBuilder()
-        //         .SetBasePath(Directory.GetCurrentDirectory())
-        //         .AddJsonFile("appsettings.json", true, true)
-        //         .AddJsonFile($"appsettings.{environment}.json", true, true);
-        //     var configuration = builder.Build();
-        //     return configuration;
-        // }
-
     }
 }

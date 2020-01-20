@@ -1,4 +1,4 @@
-﻿namespace WorkerService
+﻿namespace WorkerService.Configuration
 {
     public class WorkerSettings
     {
