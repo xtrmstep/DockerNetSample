@@ -11,9 +11,9 @@ namespace WorkerService.Services
     public class WorkerService : Worker.WorkerBase
     {
         private readonly ILogger<WorkerService> _logger;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(10000);
         private readonly IStatsDPublisher _stats;
         private readonly WorkerSettings _workerSettings;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(10000);
 
         public WorkerService(ILogger<WorkerService> logger, IOptions<WorkerSettings> workerSettings, IStatsDPublisher stats)
         {

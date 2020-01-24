@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using JustEat.StatsD;
+﻿using JustEat.StatsD;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +26,7 @@ namespace WorkerService
             var statsDSettings = _configuration.GetSection(nameof(StatsDSettings));
 
             services.AddGrpc();
-            services.Configure<WorkerSettings>(_configuration.GetSection("WorkerSettings"));
+            services.Configure<WorkerSettings>(_configuration.GetSection(nameof(WorkerSettings)));
             services.AddStatsD(
                 provider =>
                 {
@@ -54,10 +49,7 @@ namespace WorkerService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseRouting();
 
