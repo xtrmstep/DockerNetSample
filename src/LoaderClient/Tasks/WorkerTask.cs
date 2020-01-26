@@ -38,6 +38,7 @@ namespace LoaderClient.Tasks
                     ThreadPool.GetAvailableThreads(out var availableThreads, out var _);
                     _stats.Gauge(availableThreads, "GaugeAvailableThreads");
                     
+                    _stats.Increment("CountRequests");
                     await _stats.Time("TimeWait", async f => await _semaphoreSlim.WaitAsync());
 
                     var parameter = new Random(DateTime.Now.Millisecond).Next(20);
@@ -45,6 +46,7 @@ namespace LoaderClient.Tasks
                     var client = new Worker.WorkerClient(channel);
                     var reply = client.FactorialAsync(new FactorialRequest { Factor = parameter });
                     _tasks.Enqueue(reply.ResponseAsync);
+                    _stats.Increment("CountProcessed");
                 });
             } while (sw.ElapsedMilliseconds <= _settings.LoadSecondsInterval * 1000);
             sw.Stop();

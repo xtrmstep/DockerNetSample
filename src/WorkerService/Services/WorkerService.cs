@@ -26,13 +26,25 @@ namespace WorkerService.Services
 
         public override async Task<FactorialReply> Factorial(FactorialRequest request, ServerCallContext context)
         {
+            // Obtain the number of available threads in ThreadPool
+            ThreadPool.GetAvailableThreads(out var availableThreads, out _);
+            // The number of available threads is the example of Gauge metric
+            // Send gauge metric to StatsD (using JustEat.StatsD nuget)
+            _stats.Gauge(availableThreads, "GaugeAvailableThreads");
+            
+            // Increment a counter metric for incoming requests
             _stats.Increment("CountRequests");
             
-            ThreadPool.GetAvailableThreads(out var availableThreads, out _);
-            _stats.Gauge(availableThreads, "GaugeAvailableThreads");
+            // The method _stats.Time() will calculate the time while the _semaphoreSlim.WaitAsync() were waiting
+            // and send the metric to StatsD
             await _stats.Time("TimeWait", async f => await _semaphoreSlim.WaitAsync());
             
+            // Again measure time length of calculation and send it to StatsD 
             var result = await _stats.Time("TimeCalculation", async t => await CalculateFactorialAsync(request.Factor));
+            
+            // Increment a counter of processed requests
+            _stats.Increment("CountProcessed");
+            
             return await Task.FromResult(new FactorialReply
             {
                 Result = result
