@@ -40,11 +40,9 @@ namespace LoaderClient.Tasks
                     
                     await _stats.Time("TimeWait", async f => await _semaphoreSlim.WaitAsync());
 
+                    var parameter = new Random(DateTime.Now.Millisecond).Next(20);
                     using var channel = GrpcChannel.ForAddress(_settings.WorkerServiceEndpoint);
                     var client = new Worker.WorkerClient(channel);
-                    
-                    var parameter = new Random(DateTime.Now.Millisecond).Next(20);
-                    
                     var reply = client.FactorialAsync(new FactorialRequest { Factor = parameter });
                     _tasks.Enqueue(reply.ResponseAsync);
                 });

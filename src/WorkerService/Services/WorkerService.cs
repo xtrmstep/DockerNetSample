@@ -11,22 +11,28 @@ namespace WorkerService.Services
     public class WorkerService : Worker.WorkerBase
     {
         private readonly ILogger<WorkerService> _logger;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(10000);
+        private readonly SemaphoreSlim _semaphoreSlim;
         private readonly IStatsDPublisher _stats;
-        private readonly WorkerSettings _workerSettings;
+        private readonly WorkerSettings _settings;
 
-        public WorkerService(ILogger<WorkerService> logger, IOptions<WorkerSettings> workerSettings, IStatsDPublisher stats)
+        public WorkerService(ILogger<WorkerService> logger, IOptions<WorkerSettings> settings, IStatsDPublisher stats)
         {
             _logger = logger;
             _stats = stats;
-            _workerSettings = workerSettings.Value;
+            _settings = settings.Value;
+            ThreadPool.GetMaxThreads(out var maxParallelization, out _);
+            _semaphoreSlim = new SemaphoreSlim(_settings.Parallelization == 0 ? maxParallelization : _settings.Parallelization);
         }
 
         public override async Task<FactorialReply> Factorial(FactorialRequest request, ServerCallContext context)
         {
-            _stats.Increment("FactorialRequest");
-            _stats.Gauge(_semaphore.CurrentCount, "AvailableWorkers");
-            var result = await _stats.Time("FactorialTime", async t => await CalculateFactorialAsync(request.Factor));
+            _stats.Increment("CountRequests");
+            
+            ThreadPool.GetAvailableThreads(out var availableThreads, out _);
+            _stats.Gauge(availableThreads, "GaugeAvailableThreads");
+            await _stats.Time("TimeWait", async f => await _semaphoreSlim.WaitAsync());
+            
+            var result = await _stats.Time("TimeCalculation", async t => await CalculateFactorialAsync(request.Factor));
             return await Task.FromResult(new FactorialReply
             {
                 Result = result
@@ -35,15 +41,12 @@ namespace WorkerService.Services
 
         private async Task<long> CalculateFactorialAsync(int factor)
         {
-            await _semaphore.WaitAsync();
-
             long result = 1;
             for (var i = 1; i <= factor; i++)
             {
-                await Task.Delay(_workerSettings.WorkProcessDelay);
+                await Task.Delay(_settings.WorkProcessDelay);
                 result *= i;
             }
-
             return result;
         }
     }
