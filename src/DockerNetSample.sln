@@ -1,8 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "WorkerService\WorkerService.csproj", "{7962A68A-CE3A-4A63-9808-A03EED3B2BA1}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerService\WorkerService.csproj", "{7962A68A-CE3A-4A63-9808-A03EED3B2BA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoaderClient", "LoaderClient\LoaderClient.csproj", "{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoaderClient", "LoaderClient\LoaderClient.csproj", "{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,9 +15,17 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7962A68A-CE3A-4A63-9808-A03EED3B2BA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7962A68A-CE3A-4A63-9808-A03EED3B2BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7962A68A-CE3A-4A63-9808-A03EED3B2BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7962A68A-CE3A-4A63-9808-A03EED3B2BA1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F087B854-CE2F-4D70-B227-AEE3E92C6489}
 	EndGlobalSection
 EndGlobal
