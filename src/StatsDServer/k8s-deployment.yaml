@@ -1,0 +1,35 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stats
+  template:
+    metadata:
+      labels:
+        app: stats
+    spec:
+      containers:
+        - name: stats
+          image: samuelebistoletti/docker-statsd-influxdb-grafana:latest
+          ports:
+            - containerPort: 3003
+            - containerPort: 8888
+            - containerPort: 8086
+            - containerPort: 8125/udp
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-ils-service
+spec:
+  ports:
+    - name: http
+      port: 80
+      nodePort: 30062
+  selector:
+    app: nginx
+  type: LoadBalancer

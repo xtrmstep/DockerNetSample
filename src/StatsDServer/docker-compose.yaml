@@ -1,0 +1,9 @@
+﻿version: '2'
+services:
+  stats:
+    image: samuelebistoletti/docker-statsd-influxdb-grafana:latest
+    ports:
+      - "3003:3003"
+      - "3004:8888"
+      - "8086:8086"
+      - "8125:8125/udp"
