@@ -1,13 +1,21 @@
 # DockerNetSample
 
-Example of producer/consumer system, written in .NET Core 3.1 with deployment to Docker, docker-compose and to Kubernetes (k8s). The sample contains differenttypes of deployments (blue-green, canary) to Kubernetes.
+Example of producer/consumer system, written in .NET Core 3.1 with deployment to Docker, docker-compose and to Kubernetes (k8s). The sample contains different types of deployments (blue-green, canary) to k8s.
 
-## Guide through branches
+## Repo Structure
 
-The `master` branch contains code without any contanerization. It's possible to run it locally, just by running each of the application.
-Docker, docker-compose, Kubernetes configuration files are located in a separate branches, so it's possible to compare the changes related to each of the modifications.
-Othe significat changes are stored in separate branches also. This is done for cleaner representation of each of the configurations.
+* *LoaderClient* - console application gRpc client which sends requests to API to produce continuos load
+* *WorkerService* - gRpc service which performs simple CPU-bound task
+* *StatsDServer* - project to keep deployments of StatsD server and Grafana
 
 ## Content
 
-To be updated
+* Loader-Worker system sample - _DONE_
+* StatsD and Grafana containerization - _DONE_
+* .NET Core containerization
+* Blue-Green deployments
+* Canary deployments
+
+## Articles
+
+* [Capturing and Visualizing metrics of your .NET Core service](http://binary-notes.ru/capturing-and-visualizing-metrics-of-your-net-core-service/)
