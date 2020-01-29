@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoaderClient", "LoaderClient\LoaderClient.csproj", "{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatsDServer", "StatsDServer\StatsDServer.csproj", "{9CE708F2-D855-491E-8FF6-BF1B45AC7E32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7EB92B9-C093-41F1-AE86-3A88D7D949F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CE708F2-D855-491E-8FF6-BF1B45AC7E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CE708F2-D855-491E-8FF6-BF1B45AC7E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CE708F2-D855-491E-8FF6-BF1B45AC7E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CE708F2-D855-491E-8FF6-BF1B45AC7E32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
