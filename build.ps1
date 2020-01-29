@@ -1,0 +1,2 @@
+dotnet publish .\src\WorkerService\WorkerService.csproj -c Release -o .\release\WorkerService --self-contained -r win10-x64
+dotnet publish .\src\LoaderClient\LoaderClient.csproj -c Release -o .\release\LoaderClient --self-contained -r win10-x64
