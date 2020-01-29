@@ -38,17 +38,24 @@ namespace WorkerService.Services
             // The method _stats.Time() will calculate the time while the _semaphoreSlim.WaitAsync() were waiting
             // and send the metric to StatsD
             await _stats.Time("TimeWait", async f => await _semaphoreSlim.WaitAsync());
-            
-            // Again measure time length of calculation and send it to StatsD 
-            var result = await _stats.Time("TimeCalculation", async t => await CalculateFactorialAsync(request.Factor));
-            
-            // Increment a counter of processed requests
-            _stats.Increment("CountProcessed");
-            
-            return await Task.FromResult(new FactorialReply
+
+            try
             {
-                Result = result
-            });
+                // Again measure time length of calculation and send it to StatsD 
+                var result = await _stats.Time("TimeCalculation", async t => await CalculateFactorialAsync(request.Factor));
+
+                // Increment a counter of processed requests
+                _stats.Increment("CountProcessed");
+
+                return await Task.FromResult(new FactorialReply
+                {
+                    Result = result
+                });
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
         }
 
         private async Task<long> CalculateFactorialAsync(int factor)

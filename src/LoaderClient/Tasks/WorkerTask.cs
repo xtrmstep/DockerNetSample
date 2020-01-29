@@ -16,7 +16,6 @@ namespace LoaderClient.Tasks
         private readonly IStatsDPublisher _stats;
         private readonly LoaderSettings _settings;
         private readonly SemaphoreSlim _semaphoreSlim;
-        private ConcurrentQueue<Task<FactorialReply>> _tasks;
 
         public WorkerTask(IOptions<LoaderSettings> settings, IStatsDPublisher stats)
         {
@@ -28,11 +27,13 @@ namespace LoaderClient.Tasks
         
         public async Task Run()
         {
-            _tasks = new ConcurrentQueue<Task<FactorialReply>>();
+            await Task.Yield();
+            
             var sw = new Stopwatch();
             sw.Start();
             do
             {
+                await Task.Delay(100);
                 ThreadPool.QueueUserWorkItem(async _ =>
                 {
                     ThreadPool.GetAvailableThreads(out var availableThreads, out var _);
@@ -41,16 +42,21 @@ namespace LoaderClient.Tasks
                     _stats.Increment("CountRequests");
                     await _stats.Time("TimeWait", async f => await _semaphoreSlim.WaitAsync());
 
-                    var parameter = new Random(DateTime.Now.Millisecond).Next(20);
-                    using var channel = GrpcChannel.ForAddress(_settings.WorkerServiceEndpoint);
-                    var client = new Worker.WorkerClient(channel);
-                    var reply = client.FactorialAsync(new FactorialRequest { Factor = parameter });
-                    _tasks.Enqueue(reply.ResponseAsync);
-                    _stats.Increment("CountProcessed");
+                    try
+                    {
+                        var parameter = new Random(DateTime.Now.Millisecond).Next(20);
+                        using var channel = GrpcChannel.ForAddress(_settings.WorkerServiceEndpoint);
+                        var client = new Worker.WorkerClient(channel);
+                        var reply = await client.FactorialAsync(new FactorialRequest {Factor = parameter});
+                        _stats.Increment("CountProcessed");
+                    }
+                    finally
+                    {
+                        _semaphoreSlim.Release();
+                    } 
                 });
-            } while (sw.ElapsedMilliseconds <= _settings.LoadSecondsInterval * 1000);
+            } while (_settings.LoadSecondsInterval == 0 || (sw.ElapsedMilliseconds <= _settings.LoadSecondsInterval * 1000));
             sw.Stop();
-            await Task.WhenAll(_tasks);
         }
     }
 }
