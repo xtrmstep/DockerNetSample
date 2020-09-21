@@ -18,4 +18,4 @@ Example of producer/consumer system, written in .NET Core 3.1 with deployment to
 
 ## Articles
 
-* [Capturing and Visualizing metrics of your .NET Core service](http://binary-notes.ru/capturing-and-visualizing-metrics-of-your-net-core-service/)
+* [Deployment to Docker and Kubernetes of StatsD-Grafana bundle](https://medium.com/@alexander.goida/deployment-to-docker-and-kubernetes-of-statsd-grafana-bundle-543d776a29b6)
